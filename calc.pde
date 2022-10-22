@@ -1,8 +1,9 @@
 boolean[][] vram; // Changes which will be blitted to the screen
-boolean[][] lastFrame; // What's actually shown. Useful for calcuating diff between frames for fade.
-long[][] frameWhenSet;
+float[][] amount; // Amount of darkness at each cell
 int fadeTime = 10;
+
 color[] palette = {color(208, 238, 209), color(77, 76, 49)};
+color[] strokePalette = {color(188, 218, 189), color(57, 56, 29)};
 
 final int NUM_GLYPHS = 10;
 final int GLYPH_WIDTH = 5;
@@ -10,7 +11,7 @@ final int GLYPH_HEIGHT = 7;
 boolean[][][] glyphs = new boolean[NUM_GLYPHS][GLYPH_HEIGHT][GLYPH_WIDTH]; // 5x7xNUM_GLYPHS glyph array
 
 void setPixel(int row, int col, boolean val) {
-    vram[row][col] = val;
+  vram[row][col] = val;
 }
 
 void loadGlyphs() {
@@ -43,19 +44,14 @@ void drawGlyph(int glyph, int row, int col) {
 void blit() {
   for(int j = 0; j < 64; j++) {
     for(int i = 0; i < 94; i++) {
-      if(vram[j][i] != lastFrame[j][i]) {
-        frameWhenSet[j][i] = frameCount;
-        lastFrame[j][i] = vram[j][i];
+      if(vram[j][i]) {
+        amount[j][i] = clamp(amount[j][i] + (1.0 / fadeTime), 0.0, 1.0);
+      } else {
+        amount[j][i] = clamp(amount[j][i] - (1.0 / fadeTime), 0.0, 1.0);
       }
       
-      color current = palette[vram[j][i] ? 1 : 0];
-      color currentStroke = color(red(current) - 20, green(current) - 20, blue(current) - 20);
-      color other = palette[vram[j][i] ? 0 : 1];
-      color otherStroke = color(red(other) - 20, green(other) - 20, blue(other) - 20);
-      float lerpFactor = clamp((frameCount - frameWhenSet[j][i]) / (float) fadeTime, 0.0, 1.0);
-      
-      fill(lerpColor(other, current, lerpFactor));
-      stroke(lerpColor(otherStroke, currentStroke, lerpFactor));
+      fill(lerpColor(palette[0], palette[1], amount[j][i]));
+      stroke(lerpColor(strokePalette[0], strokePalette[1], amount[j][i]));
       rect(i * 6, j * 6, 6, 6);
     }
   }
@@ -65,22 +61,18 @@ void setup() {
   size(565, 384);
   loadGlyphs();
   vram = new boolean[64][94];
-  lastFrame = new boolean[64][94];
-  frameWhenSet = new long[64][94];
+  amount = new float[64][94];
   
   for(int j = 0; j < 64; j++) {
     for(int i = 0; i < 94; i++) {
-      frameWhenSet[j][i] = -fadeTime;
+      amount[j][i] = 0;
     }
   }
 }
 
 void draw() {;
   fillScreen(false);
-  /*drawGlyph(frameCount / 20 % 10, 5, 5);*/
-  for(var i = 0; i < 94; i++) {
-    setPixel((int) (sin(i / 10.0) * map(frameCount % 60, 0, 60, 0, 30) + 31.0), i, true);
-  }
+  drawGlyph(frameCount / 20 % 10, 5, 5);
   blit();
 }
 
