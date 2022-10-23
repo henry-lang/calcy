@@ -5,13 +5,12 @@ Stack<Application> applications; // Queue of applications to run. The first elem
 
 Screen screen;
 
-int[] input = {};
-
 void setup() {
   size(565, 384);
   
   applications = new Stack<>();
   applications.push(new BlankApplication());
+  applications.push(new EvaluatorApplication());
   applications.push(new StartupApplication());
   
   screen = new Screen(64, 94, 248, 7, 5, 10, 
@@ -29,11 +28,6 @@ void draw() {
   }
   currentApp.draw(screen);
   
-  /*screen.fillScreen(false);
-  screen.drawGlyphs(input, 1, 1, 1);
-  if((frameCount / 30) % 2 == 0) {
-    screen.drawGlyph(224, 1, 1 + screen.glyphCols * input.length + input.length);
-  }*/
   screen.blit(this.g); // Blit the screen onto the window surface (this.g)
 }
 

@@ -20,12 +20,6 @@ interface Application {
 class BlankApplication implements Application {}
 
 class StartupApplication implements Application {
-  // private int[] input;
-  
-  public StartupApplication() {
-    //this.input = new int[] {};
-  }
-  
   @Override
   ApplicationUpdateResult update(long frameCount) {
     return frameCount > 30 ? ApplicationUpdateResult.QUIT : ApplicationUpdateResult.OK;
@@ -37,22 +31,48 @@ class StartupApplication implements Application {
     screen.drawGlyphs(new int[] {'c', 'a', 'l', 'c', 'y'}, 1, 1, 1);
     screen.drawGlyphs(new int[] {'b', 'y', ' ', 'h', 'e', 'n', 'r', 'y', 'l', 'a', 'n', 'g'}, screen.glyphRows + 3, 1, 1);
   }
+}
+
+class EvaluatorApplication implements Application {
+  private int[] input;
+  private long frames;
+  
+  public EvaluatorApplication() {
+    this.input = new int[] {};
+    this.frames = 0;
+  }
+  
+  @Override
+  ApplicationUpdateResult update(long frameCount) {
+    this.frames++;
+    return ApplicationUpdateResult.OK;
+  }
+  
+  @Override
+  void draw(Screen screen) {
+    screen.fillScreen(false);
+    screen.drawGlyphs(this.input, 1, 1, 1);
+    if((this.frames / 30) % 2 == 0) {
+      screen.drawGlyph(224, 1, 1 + screen.glyphCols * this.input.length + this.input.length);
+    }
+  }
   
   @Override
   void handleInput(char key, int keyCode) {
-    /*switch(keyCode) {
+    this.frames = 0;
+    switch(keyCode) {
       case BACKSPACE: {
-        input = Arrays.copyOf(input, input.length - 1);
+        this.input = Arrays.copyOf(this.input, this.input.length - 1);
         break;
       }
       case SHIFT:
       case CONTROL:
       case ALT: break;
       default: {
-        input = Arrays.copyOf(input, input.length + 1);
-        input[input.length - 1] = key;
+        this.input = Arrays.copyOf(this.input, this.input.length + 1);
+        this.input[this.input.length - 1] = key;
         break;
       }
-    }*/
+    }
   }
 }
