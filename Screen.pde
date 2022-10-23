@@ -4,17 +4,25 @@ class Screen {
   public final int numGlyphs;
   public final int glyphRows;
   public final int glyphCols;
+  public final int fadeTime;
+  
+  private final int[] palette;
+  private final int[] strokePalette;
   
   private boolean[][][] glyphs;
   private boolean[][] vram;
   private float[][] amount; // Amount of darkness at each cell (LCD fade effect)
 
-  public Screen(int rows, int cols, int numGlyphs, int glyphRows, int glyphCols) {
+  public Screen(int rows, int cols, int numGlyphs, int glyphRows, int glyphCols, int fadeTime, int[] palette, int[] strokePalette) {
     this.rows = rows;
     this.cols = cols;
     this.numGlyphs = numGlyphs;
     this.glyphRows = glyphRows;
     this.glyphCols = glyphCols;
+    this.fadeTime = fadeTime;
+    
+    this.palette = palette;
+    this.strokePalette = strokePalette;
     
     this.glyphs = new boolean[numGlyphs][glyphRows][glyphCols];
     this.vram = new boolean[rows][cols];
@@ -68,12 +76,12 @@ class Screen {
   }
   
   public void blit(PGraphics graphics) {
-    for(var j = 0; j < SCREEN_ROWS; j++) {
-      for(var i = 0; i < SCREEN_COLS; i++) {
-        if(vram[j][i]) {
-          amount[j][i] = clamp(amount[j][i] + (1.0 / fadeTime), 0.0, 1.0);
+    for(var j = 0; j < this.rows; j++) {
+      for(var i = 0; i < this.cols; i++) {
+        if(this.vram[j][i]) {
+          this.amount[j][i] = clamp(this.amount[j][i] + (1.0 / this.fadeTime), 0.0, 1.0);
         } else {
-          amount[j][i] = clamp(amount[j][i] - (1.0 / fadeTime), 0.0, 1.0);
+          this.amount[j][i] = clamp(this.amount[j][i] - (1.0 / this.fadeTime), 0.0, 1.0);
         }
       
         graphics.fill(lerpColor(palette[0], palette[1], amount[j][i]));
