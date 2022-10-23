@@ -19,11 +19,11 @@ interface Application {
 
 class BlankApplication implements Application {}
 
-class EvaluatorApplication implements Application {
-  private int[] input;
+class StartupApplication implements Application {
+  // private int[] input;
   
-  public EvaluatorApplication() {
-    this.input = new int[] {};
+  public StartupApplication() {
+    //this.input = new int[] {};
   }
   
   @Override
@@ -33,12 +33,14 @@ class EvaluatorApplication implements Application {
   
   @Override
   void draw(Screen screen) {
-    screen.fillScreen(true);
+    screen.fillScreen(false);
+    screen.drawGlyphs(new int[] {'c', 'a', 'l', 'c', 'y'}, 1, 1, 1);
+    screen.drawGlyphs(new int[] {'b', 'y', ' ', 'h', 'e', 'n', 'r', 'y', 'l', 'a', 'n', 'g'}, screen.glyphRows + 3, 1, 1);
   }
   
   @Override
   void handleInput(char key, int keyCode) {
-    switch(keyCode) {
+    /*switch(keyCode) {
       case BACKSPACE: {
         input = Arrays.copyOf(input, input.length - 1);
         break;
@@ -51,6 +53,6 @@ class EvaluatorApplication implements Application {
         input[input.length - 1] = key;
         break;
       }
-    }
+    }*/
   }
 }

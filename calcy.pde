@@ -12,7 +12,7 @@ void setup() {
   
   applications = new Stack<>();
   applications.push(new BlankApplication());
-  applications.push(new EvaluatorApplication());
+  applications.push(new StartupApplication());
   
   screen = new Screen(64, 94, 248, 7, 5, 10, 
     new color[] {color(208, 238, 209), color(77, 76, 49)},
