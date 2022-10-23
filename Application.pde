@@ -19,7 +19,10 @@ interface Application {
 
 class BlankApplication implements Application {}
 
-class StartupApplication implements Application {
+static class StartupApplication implements Application {
+  private static int[] calcy = {'c', 'a', 'l', 'c', 'y'};
+  private static int[] author = {'b', 'y', ' ', 'h', 'e', 'n', 'r', 'y', 'l', 'a', 'n', 'g'};
+  
   @Override
   ApplicationUpdateResult update(long frameCount) {
     return frameCount > 30 ? ApplicationUpdateResult.QUIT : ApplicationUpdateResult.OK;
@@ -28,8 +31,8 @@ class StartupApplication implements Application {
   @Override
   void draw(Screen screen) {
     screen.fillScreen(false);
-    screen.drawGlyphs(new int[] {'c', 'a', 'l', 'c', 'y'}, 1, 1, 1);
-    screen.drawGlyphs(new int[] {'b', 'y', ' ', 'h', 'e', 'n', 'r', 'y', 'l', 'a', 'n', 'g'}, screen.glyphRows + 3, 1, 1);
+    screen.drawGlyphs(calcy, 1, 1, 1);
+    screen.drawGlyphs(author, screen.glyphRows + 3, 1, 1);
   }
 }
 

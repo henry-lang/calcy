@@ -6,8 +6,8 @@ class Screen {
   public final int glyphCols;
   public final int fadeTime;
   
-  private final int[] palette;
-  private final int[] strokePalette;
+  private final color[] palette;
+  private final color[] strokePalette;
   
   private boolean[][][] glyphs;
   private boolean[][] vram;

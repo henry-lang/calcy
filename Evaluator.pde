@@ -25,14 +25,14 @@ class Token {
     this.name = null;
   }
   
-  public Token(TokenType type, double num) {
-    this.type = type;
+  public Token(double num) {
+    this.type = TokenType.NUM;
     this.num = num;
     this.name = null;
   }
   
-  public Token(TokenType type, String name) {
-    this.type = type;
+  public Token(String name) {
+    this.type = TokenType.NAME;
     this.num = null;
     this.name = name;
   }
