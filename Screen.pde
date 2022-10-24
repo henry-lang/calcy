@@ -6,14 +6,14 @@ class Screen {
   public final int glyphCols;
   public final int fadeTime;
   
-  private final int[] palette;
-  private final int[] strokePalette;
+  private final color[] palette;
+  private final color[] strokePalette;
   
   private boolean[][][] glyphs;
   private boolean[][] vram;
   private float[][] amount; // Amount of darkness at each cell (LCD fade effect)
 
-  public Screen(int rows, int cols, int numGlyphs, int glyphRows, int glyphCols, int fadeTime, int[] palette, int[] strokePalette) {
+  public Screen(int rows, int cols, int numGlyphs, int glyphRows, int glyphCols, int fadeTime, color[] palette, color[] strokePalette) {
     this.rows = rows;
     this.cols = cols;
     this.numGlyphs = numGlyphs;

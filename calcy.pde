@@ -3,6 +3,7 @@ import java.util.Stack;
 
 Stack<Application> applications; // Queue of applications to run. The first element is the one currently running.
 Screen screen;
+Evaluator evaluator;
 
 void setup() {
   size(564, 384);
@@ -17,6 +18,8 @@ void setup() {
     new color[] {color(188, 218, 189), color(57, 56, 29)}
   ); // I know these are magic numbers but refer to the constructor of the Screen class.
   screen.loadGlyphs("glyphs.txt");
+  
+  evaluator = new Evaluator(Environment.DEFAULT);
 }
 
 void draw() {

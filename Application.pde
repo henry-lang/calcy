@@ -44,15 +44,14 @@ abstract class InputApplication implements Application {
     return ApplicationUpdateResult.OK;
   }
   
-  protected abstract void submitInput();
+  protected abstract boolean submitInput(); // Returns whether to clear input array afterwards
   
   @Override
   public void handleInput(char key, int keyCode) {
     this.cursorFrames = 0;
     switch(keyCode) {
       case ENTER: {
-        this.submitInput();
-        this.input = new int[] {};
+        if(this.submitInput()) this.input = new int[] {};
         break;
       }
       case BACKSPACE: {
@@ -86,10 +85,15 @@ class EvaluatorApplication extends InputApplication {
   }
   
   @Override
-  protected void submitInput() {
+  protected boolean submitInput() {
     if(Arrays.equals(this.input, new int[] {'g', 'r', 'a', 'p', 'h'})) { // I know this is "inefficient" but idc
       applications.add(new GrapherApplication());
+      return true;
     }
+    
+    evaluator.tokenize(input);
+    
+    return true;
   }
 }
 
@@ -114,10 +118,10 @@ class GrapherApplication extends InputApplication {
     for(int x = -1; x < screen.cols + 1; x++) {
       double realX = map(x, -1, screen.cols + 1, -5, 5);
       double sq = realX * realX;
-      double screenY = (sq / 10.0 * (screen.rows - 2 - screen.glyphRows)) / 2 + (screen.rows - 2 - screen.glyphRows) / 2;
+      double screenY = (sq / mouseX * (screen.rows - 2 - screen.glyphRows)) / 2 + (screen.rows - 2 - screen.glyphRows) / 2;
       double realXLast = map(x - 1, -1, screen.cols + 1, -5, 5);
       double sqLast = realXLast * realXLast;
-      double screenYLast = (sqLast / 10.0 * (screen.rows - 2 - screen.glyphRows)) / 2 + (screen.rows - 2 - screen.glyphRows) / 2;
+      double screenYLast = (sqLast / mouseX * (screen.rows - 2 - screen.glyphRows)) / 2 + (screen.rows - 2 - screen.glyphRows) / 2;
       screen.drawLine((int) (screen.rows - 2 - screen.glyphRows) - (int) screenYLast, x - 1, (int) (screen.rows - 2 - screen.glyphRows) - (int) screenY, x);
     }
     
@@ -129,7 +133,7 @@ class GrapherApplication extends InputApplication {
   }
   
   @Override
-  protected void submitInput() {
-    
+  protected boolean submitInput() {
+    return false;
   }
 }
