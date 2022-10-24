@@ -2,14 +2,13 @@ import java.util.Arrays;
 import java.util.Stack;
 
 Stack<Application> applications; // Queue of applications to run. The first element is the one currently running.
-
 Screen screen;
 
 void setup() {
-  size(565, 384);
+  size(564, 384);
   
   applications = new Stack<>();
-  applications.push(new BlankApplication());
+  applications.push(new BlankApplication()); // Just in case we have no app to run
   applications.push(new EvaluatorApplication());
   applications.push(new StartupApplication());
   
@@ -21,12 +20,9 @@ void setup() {
 }
 
 void draw() {
-  Application currentApp = applications.peek();
-  while(currentApp.update(frameCount) == ApplicationUpdateResult.QUIT) {
+  while(applications.peek().update(frameCount, screen) == ApplicationUpdateResult.QUIT) {
     applications.pop();
-    currentApp = applications.peek();
   }
-  currentApp.draw(screen);
   
   screen.blit(this.g); // Blit the screen onto the window surface (this.g)
 }

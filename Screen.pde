@@ -45,7 +45,7 @@ class Screen {
     }
   }
   
-  public void fillScreen(boolean val) {
+  public void fill(boolean val) {
     for(var j = 0; j < this.rows; j++) {
       for(var i = 0; i < this.cols; i++) {
         this.setPixel(j, i, val);
@@ -64,6 +64,30 @@ class Screen {
   public void drawGlyphs(int[] glyphs, int row, int col, int spacing) {
     for(var i = 0; i < glyphs.length; i++) {
       this.drawGlyph(glyphs[i], row, col + glyphCols * i + spacing * i);
+    }
+  }
+  
+  public void drawLine(int y0, int x0, int y1, int x1) {
+    int dx = Math.abs(x1 - x0);
+    int sx = x0 < x1 ? 1 : -1;
+    int dy = -Math.abs(y1 - y0);
+    int sy = y0 < y1 ? 1 : -1;
+    int error = dx + dy;
+    
+    while(true) {
+        this.setPixel(y0, x0, true);
+        if(x0 == x1 && y0 == y1) break;
+        int e2 = 2 * error;
+        if(e2 >= dy) {
+            if(x0 == x1) break;
+            error += dy;
+            x0 += sx;
+        }
+        if(e2 <= dx) {
+            if(y0 == y1) break;
+            error += dx;
+            y0 += sy;
+        }
     }
   }
   

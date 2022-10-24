@@ -1,72 +1,67 @@
+import java.util.Arrays;
+
 enum ApplicationUpdateResult {
   OK,
   QUIT,
 }
 
 interface Application {
-  default ApplicationUpdateResult update(long frameCount) {
+  public default ApplicationUpdateResult update(long frameCount, Screen screen) {
+    screen.fill(true);
     return ApplicationUpdateResult.OK;
   }
   
-  default void draw(Screen screen) {
-    screen.fillScreen(false);
-  }
-  
-  default void handleInput(char key, int keyCode) {
-    
-  }
+  public default void handleInput(char key, int keyCode) {}
 }
 
 class BlankApplication implements Application {}
 
-class StartupApplication implements Application {
-  @Override
-  ApplicationUpdateResult update(long frameCount) {
-    return frameCount > 30 ? ApplicationUpdateResult.QUIT : ApplicationUpdateResult.OK;
-  }
+static class StartupApplication implements Application {
+  private static int[] calcy = {'c', 'a', 'l', 'c', 'y'};
+  private static int[] author = {'b', 'y', ' ', 'h', 'e', 'n', 'r', 'y', 'l', 'a', 'n', 'g'};
   
   @Override
-  void draw(Screen screen) {
-    screen.fillScreen(false);
-    screen.drawGlyphs(new int[] {'c', 'a', 'l', 'c', 'y'}, 1, 1, 1);
-    screen.drawGlyphs(new int[] {'b', 'y', ' ', 'h', 'e', 'n', 'r', 'y', 'l', 'a', 'n', 'g'}, screen.glyphRows + 3, 1, 1);
+  ApplicationUpdateResult update(long frameCount, Screen screen) {
+    screen.fill(false);
+    screen.drawGlyphs(calcy, 1, 1, 1);
+    screen.drawGlyphs(author, screen.glyphRows + 3, 1, 1);
+    return frameCount > 30 ? ApplicationUpdateResult.QUIT : ApplicationUpdateResult.OK;
   }
 }
 
-class EvaluatorApplication implements Application {
-  private int[] input;
-  private long frames;
+abstract class InputApplication implements Application {
+  protected int[] input;
+  protected long cursorFrames; // Used for blinking the cursor
   
-  public EvaluatorApplication() {
+  public InputApplication() {
     this.input = new int[] {};
-    this.frames = 0;
+    this.cursorFrames = 0;
   }
   
   @Override
-  ApplicationUpdateResult update(long frameCount) {
-    this.frames++;
+  public ApplicationUpdateResult update(long frameCount, Screen screen) {
+    cursorFrames += 1;
     return ApplicationUpdateResult.OK;
   }
   
-  @Override
-  void draw(Screen screen) {
-    screen.fillScreen(false);
-    screen.drawGlyphs(this.input, 1, 1, 1);
-    if((this.frames / 30) % 2 == 0) {
-      screen.drawGlyph(224, 1, 1 + screen.glyphCols * this.input.length + this.input.length);
-    }
-  }
+  protected abstract void submitInput();
   
   @Override
-  void handleInput(char key, int keyCode) {
-    this.frames = 0;
+  public void handleInput(char key, int keyCode) {
+    this.cursorFrames = 0;
     switch(keyCode) {
+      case ENTER: {
+        this.submitInput();
+        this.input = new int[] {};
+        break;
+      }
       case BACKSPACE: {
         this.input = Arrays.copyOf(this.input, this.input.length - 1);
         break;
       }
       case SHIFT:
       case CONTROL:
+      case 32: // Space bar
       case ALT: break;
       default: {
         this.input = Arrays.copyOf(this.input, this.input.length + 1);
@@ -74,5 +69,67 @@ class EvaluatorApplication implements Application {
         break;
       }
     }
+  }
+}
+
+class EvaluatorApplication extends InputApplication {
+  @Override
+  public ApplicationUpdateResult update(long frameCount, Screen screen) {
+    super.update(frameCount, screen);
+    
+    screen.fill(false);
+    screen.drawGlyphs(this.input, 1, 1, 1);
+    if((this.cursorFrames / 30) % 2 == 0) {
+      screen.drawGlyph(224, 1, 1 + screen.glyphCols * this.input.length + this.input.length);
+    }
+    return ApplicationUpdateResult.OK;
+  }
+  
+  @Override
+  protected void submitInput() {
+    if(Arrays.equals(this.input, new int[] {'g', 'r', 'a', 'p', 'h'})) { // I know this is "inefficient" but idc
+      applications.add(new GrapherApplication());
+    }
+  }
+}
+
+class GrapherApplication extends InputApplication {
+  int[] points;
+  
+  public GrapherApplication() {
+    this.points = new int[screen.cols];
+  }
+  
+  @Override
+  public ApplicationUpdateResult update(long frameCount, Screen screen) {
+    super.update(frameCount, screen);
+    
+    screen.fill(false);
+    screen.drawLine(2 + screen.glyphRows, 0, 2 + screen.glyphRows, screen.cols - 1);
+    screen.drawLine(2 + screen.glyphRows, 0, screen.rows - 1, 0);
+    screen.drawLine(screen.rows - 1, 0, screen.rows - 1, screen.cols - 1);
+    screen.drawLine(2 + screen.glyphRows, screen.cols - 1, screen.rows - 1, screen.cols - 1);
+    screen.drawLine((screen.rows - 2 - screen.glyphRows) / 2 + 2 + screen.glyphRows, 0, (screen.rows - 2 - screen.glyphRows) / 2 + 2 + screen.glyphRows, screen.cols - 1);
+    
+    for(int x = -1; x < screen.cols + 1; x++) {
+      double realX = map(x, -1, screen.cols + 1, -5, 5);
+      double sq = realX * realX;
+      double screenY = (sq / 10.0 * (screen.rows - 2 - screen.glyphRows)) / 2 + (screen.rows - 2 - screen.glyphRows) / 2;
+      double realXLast = map(x - 1, -1, screen.cols + 1, -5, 5);
+      double sqLast = realXLast * realXLast;
+      double screenYLast = (sqLast / 10.0 * (screen.rows - 2 - screen.glyphRows)) / 2 + (screen.rows - 2 - screen.glyphRows) / 2;
+      screen.drawLine((int) (screen.rows - 2 - screen.glyphRows) - (int) screenYLast, x - 1, (int) (screen.rows - 2 - screen.glyphRows) - (int) screenY, x);
+    }
+    
+    screen.drawGlyphs(this.input, 1, 1, 1);
+    if((this.cursorFrames / 30) % 2 == 0) {
+      screen.drawGlyph(224, 1, 1 + screen.glyphCols * this.input.length + this.input.length);
+    }
+    return ApplicationUpdateResult.OK;
+  }
+  
+  @Override
+  protected void submitInput() {
+    
   }
 }
