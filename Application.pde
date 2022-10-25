@@ -91,7 +91,7 @@ class EvaluatorApplication extends InputApplication {
       return true;
     }
     
-    evaluator.tokenize(input);
+    println(evaluator.tokenize(input).toString());
     
     return true;
   }

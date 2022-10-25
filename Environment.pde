@@ -14,9 +14,9 @@ static class Environment {
   public static final Environment DEFAULT = new Environment()
     .withVar("pi", Math.PI)
     .withVar("tau", 2 * Math.PI)
-    .withFunc("sqrt", 1, (args) -> Math.sqrt(args.get(0)))
-    .withFunc("min", 2, (args) -> Math.min(args.get(0), args.get(1)))
-    .withFunc("max", 2, (args) -> Math.max(args.get(0), args.get(1)));
+    .withFunc("sqrt", 1, args -> Math.sqrt(args.get(0)))
+    .withFunc("min", 2, args -> Math.min(args.get(0), args.get(1)))
+    .withFunc("max", 2, args -> Math.max(args.get(0), args.get(1)));
   
   private HashMap<String, Double> vars;
   private HashMap<String, Func> funcs;
