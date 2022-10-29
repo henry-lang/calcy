@@ -1,2 +1,10 @@
 .DS_Store
 .vscode
+
+*.class
+*.jar
+
+.gradle
+/build/
+!gradle-wrapper.jar
+!libs
