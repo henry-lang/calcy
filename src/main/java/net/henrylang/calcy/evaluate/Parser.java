@@ -1,34 +1,30 @@
-package net.henrylang.calcy.evaluator;
+package net.henrylang.calcy.evaluate;
 
-import net.henrylang.calcy.evaluator.node.BinaryNode;
-import net.henrylang.calcy.evaluator.node.Node;
-import net.henrylang.calcy.evaluator.node.NumberNode;
-import net.henrylang.calcy.evaluator.node.UnaryNode;
+import net.henrylang.calcy.evaluate.node.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Parser {
     private int pos;
     private final ArrayList<Token> tokens;
-    private final Environment env;
 
-    public Parser(ArrayList<Token> tokens, Environment env) {
+    public Parser(ArrayList<Token> tokens) {
         this.pos = 0;
         this.tokens = tokens;
-        this.env = env;
     }
 
     private Token token() {
         return this.tokens.get(this.pos);
     }
 
-    /*private Token peek() {
+    private Token peek() {
         if (this.pos + 1 < this.tokens.size()) {
             return this.tokens.get(this.pos + 1);
         }
 
         return null;
-    }*/
+    }
 
     private void advance() {
         if (this.pos + 1 < this.tokens.size()) {
@@ -36,15 +32,15 @@ public class Parser {
         }
     }
 
-    /*private void consume(Token.Type type) throws Evaluator.Exception {
+    private void consume(Token.Type type) throws EvaluateException {
         if (this.token().type == type) {
             this.advance();
         } else {
-            throw new Evaluator.Exception(new int[] {'B', 'a', 'd', ' ', 'T', 'o', 'k', 'e', 'n'});
+            throw new EvaluateException("Bad Token");
         }
-    }*/
+    }
 
-    private Node getFactor() throws Evaluator.Exception {
+    private Node getFactor() throws EvaluateException {
         var token = this.token();
 
         switch(token.type) {
@@ -56,12 +52,18 @@ public class Parser {
 
             case NAME:
             {
+                var current = this.token();
                 this.advance();
-                var next = this.token();
-                switch(next.type) {
+                switch(this.token().type) {
+                    case OPEN_PAREN: {
+                        this.advance();
+                        var arg = this.getExpression();
+                        this.consume(Token.Type.CLOSE_PAREN);
+                        return new FuncCallNode(current.name, List.of(arg));
+                    }
                     default:
                     {
-                        return new NumberNode(env.getVar(token.name));
+                        return new VarNode(current.name);
                     }
                 }
             }
@@ -76,12 +78,12 @@ public class Parser {
 
             default:
             {
-                throw new Evaluator.Exception(new int [] {'E', 'x', 'p', 'e', 'c', 't', 'e', 'd', ' ', 'E', 'x', 'p', 'r'});
+                throw new EvaluateException("Expected Expr");
             }
         }
     }
 
-    private Node getPower() throws Evaluator.Exception {
+    private Node getPower() throws EvaluateException {
         var factor = this.getFactor();
 
         while (this.token().type == Token.Type.CARET) {
@@ -92,7 +94,7 @@ public class Parser {
         return factor;
     }
 
-    private Node getTerm() throws Evaluator.Exception {
+    private Node getTerm() throws EvaluateException {
         var power = this.getPower();
 
         outer:
@@ -124,16 +126,16 @@ public class Parser {
         return power;
     }
 
-    public Node getExpression() throws Evaluator.Exception {
+    public Node getExpression() throws EvaluateException {
         var term = this.getTerm();
 
         outer:
-        while (true) {
+        while(true) {
             switch(this.token().type) {
                 case PLUS:
                 {
                     this.advance();
-                    term = new BinaryNode(BinaryNode.Type.ADD, term, this.getPower());
+                    term = new BinaryNode(BinaryNode.Type.ADD, term, this.getTerm());
 
                     break;
                 }
@@ -141,7 +143,7 @@ public class Parser {
                 case MINUS:
                 {
                     this.advance();
-                    term = new BinaryNode(BinaryNode.Type.SUBTRACT, term, this.getPower());
+                    term = new BinaryNode(BinaryNode.Type.SUBTRACT, term, this.getTerm());
 
                     break;
                 }

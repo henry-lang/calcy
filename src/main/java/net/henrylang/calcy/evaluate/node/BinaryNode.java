@@ -1,6 +1,7 @@
-package net.henrylang.calcy.evaluator.node;
+package net.henrylang.calcy.evaluate.node;
 
-import net.henrylang.calcy.evaluator.Environment;
+import net.henrylang.calcy.evaluate.Environment;
+import net.henrylang.calcy.evaluate.EvaluateException;
 
 public class BinaryNode implements Node {
     public enum Type {
@@ -22,7 +23,7 @@ public class BinaryNode implements Node {
     }
 
     @Override
-    public double eval(Environment env) {
+    public double eval(Environment env) throws EvaluateException {
         switch(this.type) {
             case ADD: return this.lhs.eval(env) + this.rhs.eval(env);
             case SUBTRACT: return this.lhs.eval(env) - this.rhs.eval(env);

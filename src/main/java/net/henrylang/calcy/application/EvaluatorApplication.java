@@ -1,17 +1,20 @@
 package net.henrylang.calcy.application;
 
+import net.henrylang.calcy.Calcy;
 import net.henrylang.calcy.Screen;
-import net.henrylang.calcy.evaluator.Environment;
-import net.henrylang.calcy.evaluator.Evaluator;
+import net.henrylang.calcy.Utils;
+import net.henrylang.calcy.evaluate.*;
+
 import static net.henrylang.calcy.CalcySpec.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class EvaluatorApplication extends InputApplication {
     int[] response = new int[] {};
 
     @Override
-    public ApplicationUpdateResult update(long frameCount, Screen screen) {
+    public UpdateResult update(long frameCount, Screen screen) {
         super.update(frameCount, screen);
 
         screen.fill(false);
@@ -20,7 +23,7 @@ public class EvaluatorApplication extends InputApplication {
         if((this.cursorFrames / 30) % 2 == 0) {
             screen.drawGlyph(224, 1, 1 + GLYPH_COLS * this.input.length + this.input.length);
         }
-        return ApplicationUpdateResult.OK;
+        return UpdateResult.OK;
     }
 
     @Override
@@ -29,12 +32,19 @@ public class EvaluatorApplication extends InputApplication {
             return false;
         }
 
-        if(Arrays.equals(this.input, new int[] {'g', 'r', 'a', 'p', 'h'})) { // I know this is "inefficient" but idc
-            //applications.add(new GrapherApplication());
+        if(Arrays.equals(this.input, Utils.stringToGlyphs("graph"))) { // I know this is "inefficient" but idc
+            Calcy.getInstance().runApplication(new GrapherApplication());
             return true;
         }
 
-        this.response = new Evaluator(Environment.DEFAULT).evaluate(this.input);
+        try {
+            var tokens = Tokenizer.tokenize(this.input);
+            var node = new Parser(tokens).getExpression();
+            this.response = Utils.doubleToGlyphs(node.eval(Environment.DEFAULT));
+
+        } catch (EvaluateException e) {
+            this.response = e.getGlyphs();
+        }
 
         return true;
     }

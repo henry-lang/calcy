@@ -1,22 +1,18 @@
 package net.henrylang.calcy;
 
+import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 
 public class GlyphSet {
-    private boolean[][][] glyphs = new boolean[CalcySpec.NUM_GLYPHS][CalcySpec.GLYPH_ROWS][CalcySpec.GLYPH_COLS];
+    private final boolean[][][] glyphs = new boolean[CalcySpec.NUM_GLYPHS][CalcySpec.GLYPH_ROWS][CalcySpec.GLYPH_COLS];
 
     public void load(String resourceName) {
-        Charset charset = StandardCharsets.UTF_8;
         try {
-            List<String> lines = Files.readAllLines(Path.of(Objects.requireNonNull(this.getClass().getResource(resourceName)).getFile()));
+            var path = new File(Objects.requireNonNull(this.getClass().getResource(resourceName)).getFile()).getPath();
+            var lines = Files.readAllLines(Path.of(path));
             for(var i = 0; i < CalcySpec.NUM_GLYPHS; i++) {
                 for(var j = 0; j < CalcySpec.GLYPH_ROWS; j++) {
                     for(var k = 0; k < CalcySpec.GLYPH_COLS; k++) {

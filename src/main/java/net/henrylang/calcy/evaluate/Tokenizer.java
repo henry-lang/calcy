@@ -1,27 +1,9 @@
-package net.henrylang.calcy.evaluator;
+package net.henrylang.calcy.evaluate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class Evaluator {
-    public static class Exception extends java.lang.Exception {
-            private final int[] glyphs;
-
-            public Exception(int[] glyphs) {
-                this.glyphs = glyphs;
-            }
-
-            public int[] getGlyphs() {
-                return this.glyphs;
-            }
-    }
-
-    private final Environment env;
-
-    public Evaluator(Environment env) {
-        this.env = env;
-    }
-
+public class Tokenizer {
     private static boolean isNumeric(int value) {
         return (value >= '0' && value <= '9') || value == '.';
     }
@@ -30,7 +12,7 @@ public class Evaluator {
         return (value >= 'a' && value <= 'z') || value == '|';
     }
 
-    public ArrayList<Token> tokenize(int[] expression) throws Exception {
+    public static ArrayList<Token> tokenize(int[] expression) throws EvaluateException {
         var tokens = new ArrayList<Token>();
 
         for (var i = 0; i < expression.length; ++i) {
@@ -50,7 +32,11 @@ public class Evaluator {
                 {
                     if (i + 1 < expression.length && expression[i + 1] == '*') {
                         ++i;
+                        tokens.add(new Token(Token.Type.CARET));
+                    } else {
+                        tokens.add(new Token(Token.Type.STAR));
                     }
+
                     break;
                 }
                 case '/':
@@ -73,6 +59,11 @@ public class Evaluator {
                     tokens.add(new Token(Token.Type.CLOSE_PAREN));
                     break;
                 }
+                case ',':
+                {
+                    tokens.add(new Token(Token.Type.COMMA));
+                    break;
+                }
 
                 default:
                 {
@@ -91,7 +82,7 @@ public class Evaluator {
                             tokens.add(new Token(Double.parseDouble(String.valueOf(chars))));
                         }
                         catch(NumberFormatException e) {
-                            throw new Exception(new int[]{'I', 'n', 'v', 'a', 'l', 'i', 'd', ' ', 'N', 'u', 'm'});
+                            throw new EvaluateException("Invalid Num");
                         }
                     } else if (isName(c)) {
                         var startIdx = i;
@@ -106,29 +97,12 @@ public class Evaluator {
 
                         tokens.add(new Token(String.valueOf(chars)));
                     } else {
-                        throw new Exception(new int[]{'B', 'a', 'd', ' ', 'T', 'o', 'k', 'e', 'n'});
+                        throw new EvaluateException("Bad Token");
                     }
                 }
             }
         }
 
         return tokens;
-    }
-
-    // This function returns glyphs to show on the screen as a response.
-    public int[] evaluate(int[] expression) {
-        try {
-            var tokens = this.tokenize(expression);
-            var parser = new Parser(tokens, this.env);
-            var result = parser.getExpression().eval(this.env);
-            var chars = String.format("%.17g", result).replaceFirst("\\.?0+(e|$)", "$1").toCharArray();
-            var intVersion = new int[chars.length];
-            for(int i = 0; i < chars.length; i++) {
-                intVersion[i] = chars[i];
-            }
-            return intVersion;
-        } catch(Exception e) {
-            return e.getGlyphs();
-        }
     }
 }

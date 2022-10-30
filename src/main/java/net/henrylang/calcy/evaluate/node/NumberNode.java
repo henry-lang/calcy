@@ -1,6 +1,6 @@
-package net.henrylang.calcy.evaluator.node;
+package net.henrylang.calcy.evaluate.node;
 
-import net.henrylang.calcy.evaluator.Environment;
+import net.henrylang.calcy.evaluate.Environment;
 
 public class NumberNode implements Node {
     public double value;

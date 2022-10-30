@@ -1,6 +1,6 @@
 package net.henrylang.calcy.application;
 
-public enum ApplicationUpdateResult {
+public enum UpdateResult {
     OK,
     QUIT,
 }

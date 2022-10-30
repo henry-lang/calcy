@@ -3,7 +3,6 @@ package net.henrylang.calcy;
 import net.henrylang.calcy.application.*;
 import processing.core.PApplet;
 
-import java.net.URISyntaxException;
 import java.util.Stack;
 
 import static net.henrylang.calcy.CalcySpec.*;
@@ -21,9 +20,10 @@ public class Calcy extends PApplet {
 
     private final Stack<Application> applications = new Stack<>();
 
-    // public static Calcy getInstance() {
-    //     return instance;
-    // }
+    public static Calcy getInstance() {
+         return instance;
+    }
+
     //
     // public Screen getScreen() {
     //     return this.screen;
@@ -68,7 +68,7 @@ public class Calcy extends PApplet {
 
     @Override
     public void draw() {
-        while(this.getRunningApplication().update(this.frameCount, this.screen) == ApplicationUpdateResult.QUIT) {
+        while(this.getRunningApplication().update(this.frameCount, this.screen) == UpdateResult.QUIT) {
             this.quitApplication();
         }
 

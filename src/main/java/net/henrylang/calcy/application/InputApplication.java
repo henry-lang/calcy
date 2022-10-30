@@ -13,9 +13,9 @@ public abstract class InputApplication implements Application {
     protected abstract boolean submitInput(); // Returns whether to clear input array afterwards
 
     @Override
-    public ApplicationUpdateResult update(long frameCount, Screen screen) {
-        cursorFrames += 1;
-        return ApplicationUpdateResult.OK;
+    public UpdateResult update(long frameCount, Screen screen) {
+        ++cursorFrames;
+        return UpdateResult.OK;
     }
 
     @Override
@@ -27,7 +27,9 @@ public abstract class InputApplication implements Application {
                 break;
             }
             case BACKSPACE: {
-                this.input = Arrays.copyOf(this.input, this.input.length - 1);
+                if(input.length > 0) {
+                    this.input = Arrays.copyOf(this.input, this.input.length - 1);
+                }
                 break;
             }
             case SHIFT:

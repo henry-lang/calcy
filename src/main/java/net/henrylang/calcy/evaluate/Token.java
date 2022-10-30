@@ -1,4 +1,4 @@
-package net.henrylang.calcy.evaluator;
+package net.henrylang.calcy.evaluate;
 
 public class Token {
     public enum Type {
@@ -13,8 +13,7 @@ public class Token {
 
         OPEN_PAREN,
         CLOSE_PAREN,
-
-        END
+        COMMA
     }
 
     public final Type type;
