@@ -2,7 +2,9 @@ package net.henrylang.calcy;
 
 import net.henrylang.calcy.application.*;
 import processing.core.PApplet;
+import processing.core.PImage;
 
+import java.util.Objects;
 import java.util.Stack;
 
 import static net.henrylang.calcy.CalcySpec.*;
@@ -55,6 +57,7 @@ public class Calcy extends PApplet {
     public Calcy() {
         this.glyphSet.load("/glyphs.txt");
 
+
         this.runApplication(new BlankApplication());
         this.runApplication(new EvaluatorApplication());
         this.runApplication(new StartupApplication());
@@ -64,6 +67,13 @@ public class Calcy extends PApplet {
     public void settings() {
         instance = this;
         this.size(SCREEN_COLS * PIXEL_SIZE, SCREEN_ROWS * PIXEL_SIZE);
+    }
+
+    @Override
+    public void setup() {
+        PImage icon = this.loadImage(Objects.requireNonNull(this.getClass().getResource("/icon.png")).getFile());
+        this.getSurface().setIcon(icon);
+        this.getSurface().setTitle("Calcy");
     }
 
     @Override

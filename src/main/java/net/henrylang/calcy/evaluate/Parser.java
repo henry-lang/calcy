@@ -57,9 +57,26 @@ public class Parser {
                 switch(this.token().type) {
                     case OPEN_PAREN: {
                         this.advance();
-                        var arg = this.getExpression();
-                        this.consume(Token.Type.CLOSE_PAREN);
-                        return new FuncCallNode(current.name, List.of(arg));
+                        var args = new ArrayList<Node>();
+                        outer:
+                        while(true) {
+                            args.add(this.getExpression());
+                            switch(this.token().type) {
+                                case CLOSE_PAREN: {
+                                    break outer;
+                                }
+
+                                case COMMA: {
+                                    this.advance();
+                                    continue;
+                                }
+
+                                default: {
+                                    throw new EvaluateException("Huh");
+                                }
+                            }
+                        }
+                        return new FuncCallNode(current.name, args);
                     }
                     default:
                     {
