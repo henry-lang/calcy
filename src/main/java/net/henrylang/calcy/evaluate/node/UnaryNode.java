@@ -18,11 +18,8 @@ public class UnaryNode implements Node {
 
     @Override
     public double eval(Environment env) throws EvaluateException {
-        switch(this.type) {
-            case NEGATE: {
-                return -this.operand.eval(env);
-            }
-        }
-        return 0;
+        return switch (this.type) {
+            case NEGATE -> -this.operand.eval(env);
+        };
     }
 }

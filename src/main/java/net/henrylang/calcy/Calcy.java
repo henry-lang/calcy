@@ -26,15 +26,6 @@ public class Calcy extends PApplet {
          return instance;
     }
 
-    //
-    // public Screen getScreen() {
-    //     return this.screen;
-    // }
-    //
-    // public GlyphSet getGlyphSet() {
-    //     return this.glyphSet;
-    // }
-
     public static void main(String[] args) {
         PApplet.main(Calcy.class.getName());
     }

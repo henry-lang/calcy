@@ -23,10 +23,6 @@ public class FuncCallNode implements Node {
             throw new EvaluateException("Invalid Func");
         }
 
-        if(func.arity != args.size()) {
-            throw new EvaluateException("Invalid Args");
-        }
-
         var numArgs = new ArrayList<Double>();
         for (Node node : args) {
             double eval = node.eval(env);

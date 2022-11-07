@@ -10,6 +10,7 @@ public class VarNode implements Node {
         this.name = name;
     }
 
+    @Override
     public double eval(Environment env) throws EvaluateException {
         var value = env.getVar(this.name);
 

@@ -43,60 +43,39 @@ public class Parser {
     private Node getFactor() throws EvaluateException {
         var token = this.token();
 
-        switch(token.type) {
-            case NUM:
-            {
+        switch (token.type) {
+            case NUM -> {
                 this.advance();
                 return new NumberNode(token.num);
             }
-
-            case NAME:
-            {
+            case NAME -> {
                 var current = this.token();
                 this.advance();
-                switch(this.token().type) {
-                    case OPEN_PAREN: {
-                        this.advance();
-                        var args = new ArrayList<Node>();
-                        outer:
-                        while(true) {
-                            args.add(this.getExpression());
-                            switch(this.token().type) {
-                                case CLOSE_PAREN: {
-                                    break outer;
-                                }
-
-                                case COMMA: {
-                                    this.advance();
-                                    continue;
-                                }
-
-                                default: {
-                                    throw new EvaluateException("Huh");
-                                }
+                if (this.token().type == Token.Type.OPEN_PAREN) {
+                    this.advance();
+                    var args = new ArrayList<Node>();
+                    outer:
+                    while (true) {
+                        switch (this.token().type) {
+                            case CLOSE_PAREN -> {
+                                break outer;
                             }
+                            case COMMA -> this.advance();
+                            default -> args.add(this.getExpression());
                         }
-                        return new FuncCallNode(current.name, args);
                     }
-                    default:
-                    {
-                        return new VarNode(current.name);
-                    }
+                    return new FuncCallNode(current.name, args);
+                } else {
+                    return new VarNode(current.name);
                 }
             }
-
-            case MINUS:
-            {
+            case MINUS -> {
                 this.advance();
                 var factor = this.getFactor();
 
                 return new UnaryNode(UnaryNode.Type.NEGATE, factor);
             }
-
-            default:
-            {
-                throw new EvaluateException("Expected Expr");
-            }
+            default -> throw new EvaluateException("Expected Expr");
         }
     }
 
@@ -116,25 +95,17 @@ public class Parser {
 
         outer:
         while (true) {
-            switch(this.token().type) {
-                case STAR:
-                {
+            switch (this.token().type) {
+                case STAR -> {
                     this.advance();
                     power = new BinaryNode(BinaryNode.Type.MULTIPLY, power, this.getPower());
 
-                    break;
                 }
-
-                case SLASH:
-                {
+                case SLASH -> {
                     this.advance();
                     power = new BinaryNode(BinaryNode.Type.DIVIDE, power, this.getPower());
-
-                    break;
                 }
-
-                default:
-                {
+                default -> {
                     break outer;
                 }
             }
@@ -148,25 +119,16 @@ public class Parser {
 
         outer:
         while(true) {
-            switch(this.token().type) {
-                case PLUS:
-                {
+            switch (this.token().type) {
+                case PLUS -> {
                     this.advance();
                     term = new BinaryNode(BinaryNode.Type.ADD, term, this.getTerm());
-
-                    break;
                 }
-
-                case MINUS:
-                {
+                case MINUS -> {
                     this.advance();
                     term = new BinaryNode(BinaryNode.Type.SUBTRACT, term, this.getTerm());
-
-                    break;
                 }
-
-                default:
-                {
+                default -> {
                     break outer;
                 }
             }

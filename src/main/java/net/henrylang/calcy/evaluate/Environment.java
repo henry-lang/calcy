@@ -41,13 +41,4 @@ public class Environment {
     public void insertFunc(String name, int arity, Function<List<Double>, Double> func) {
         this.funcs.put(name, new Func(arity, func));
     }
-
-    public double runFunc(String name, ArrayList<Double> args) {
-        var func = this.funcs.get(name);
-        if(func.arity != args.size()) {
-            return Double.NaN;
-        }
-
-        return func.run(args);
-    }
 }

@@ -17,56 +17,23 @@ public class Tokenizer {
 
         for (var i = 0; i < expression.length; ++i) {
             var c = expression[i];
-            switch(c) {
-                case '+':
-                {
-                    tokens.add(new Token(Token.Type.PLUS));
-                    break;
-                }
-                case '-':
-                {
-                    tokens.add(new Token(Token.Type.MINUS));
-                    break;
-                }
-                case '*':
-                {
+            tokens.add(switch (c) {
+                case '+' -> new Token(Token.Type.PLUS);
+                case '-' -> new Token(Token.Type.MINUS);
+                case '*' -> {
                     if (i + 1 < expression.length && expression[i + 1] == '*') {
                         ++i;
-                        tokens.add(new Token(Token.Type.CARET));
+                        yield new Token(Token.Type.CARET);
                     } else {
-                        tokens.add(new Token(Token.Type.STAR));
+                        yield new Token(Token.Type.STAR);
                     }
-
-                    break;
                 }
-                case '/':
-                {
-                    tokens.add(new Token(Token.Type.SLASH));
-                    break;
-                }
-                case '^':
-                {
-                    tokens.add(new Token(Token.Type.CARET));
-                    break;
-                }
-                case '(':
-                {
-                    tokens.add(new Token(Token.Type.OPEN_PAREN));
-                    break;
-                }
-                case ')':
-                {
-                    tokens.add(new Token(Token.Type.CLOSE_PAREN));
-                    break;
-                }
-                case ',':
-                {
-                    tokens.add(new Token(Token.Type.COMMA));
-                    break;
-                }
-
-                default:
-                {
+                case '/' -> new Token(Token.Type.SLASH);
+                case '^' -> new Token(Token.Type.CARET);
+                case '(' -> new Token(Token.Type.OPEN_PAREN);
+                case ')' -> new Token(Token.Type.CLOSE_PAREN);
+                case ',' -> new Token(Token.Type.COMMA);
+                default -> {
                     if (isNumeric(c)) {
                         var startIdx = i;
                         while (i + 1 < expression.length && isNumeric(expression[i + 1])) {
@@ -79,9 +46,8 @@ public class Tokenizer {
                         }
 
                         try {
-                            tokens.add(new Token(Double.parseDouble(String.valueOf(chars))));
-                        }
-                        catch(NumberFormatException e) {
+                            yield new Token(Double.parseDouble(String.valueOf(chars)));
+                        } catch (NumberFormatException e) {
                             throw new EvaluateException("Invalid Num");
                         }
                     } else if (isName(c)) {
@@ -95,12 +61,12 @@ public class Tokenizer {
                             chars[j] = (char) sub[j];
                         }
 
-                        tokens.add(new Token(String.valueOf(chars)));
+                        yield new Token(String.valueOf(chars));
                     } else {
                         throw new EvaluateException("Bad Token");
                     }
                 }
-            }
+            });
         }
 
         return tokens;

@@ -24,13 +24,12 @@ public class BinaryNode implements Node {
 
     @Override
     public double eval(Environment env) throws EvaluateException {
-        switch(this.type) {
-            case ADD: return this.lhs.eval(env) + this.rhs.eval(env);
-            case SUBTRACT: return this.lhs.eval(env) - this.rhs.eval(env);
-            case MULTIPLY: return this.lhs.eval(env) * this.rhs.eval(env);
-            case DIVIDE: return this.lhs.eval(env) / this.rhs.eval(env);
-            case POWER: return Math.pow(this.lhs.eval(env), this.rhs.eval(env));
-        }
-        return 0;
+        return switch (this.type) {
+            case ADD -> this.lhs.eval(env) + this.rhs.eval(env);
+            case SUBTRACT -> this.lhs.eval(env) - this.rhs.eval(env);
+            case MULTIPLY -> this.lhs.eval(env) * this.rhs.eval(env);
+            case DIVIDE -> this.lhs.eval(env) / this.rhs.eval(env);
+            case POWER -> Math.pow(this.lhs.eval(env), this.rhs.eval(env));
+        };
     }
 }
