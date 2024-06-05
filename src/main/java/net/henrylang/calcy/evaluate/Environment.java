@@ -6,13 +6,15 @@ import java.util.List;
 import java.util.function.Function;
 
 public class Environment {
-    public static final Environment DEFAULT = new Environment()
-            .withVar("pi", Math.PI)
-            .withVar("tau", 2 * Math.PI)
-            .withVar("e", Math.E)
-            .withFunc("sqrt", 1, args -> Math.sqrt(args.get(0)))
-            .withFunc("min", 2, args -> Math.min(args.get(0), args.get(1)))
-            .withFunc("max", 2, args -> Math.max(args.get(0), args.get(1)));
+    public static Environment defaultEnv() {
+        return new Environment()
+                .withVar("pi", Math.PI)
+                .withVar("tau", 2 * Math.PI)
+                .withVar("e", Math.E)
+                .withFunc("sqrt", 1, args -> Math.sqrt(args.get(0)))
+                .withFunc("min", 2, args -> Math.min(args.get(0), args.get(1)))
+                .withFunc("max", 2, args -> Math.max(args.get(0), args.get(1)));
+    }
 
     private final HashMap<String, Double> vars = new HashMap<>();
     private final HashMap<String, Func> funcs = new HashMap<>();

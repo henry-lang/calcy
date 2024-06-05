@@ -58,10 +58,16 @@ public class Parser {
                     while (true) {
                         switch (this.token().type) {
                             case CLOSE_PAREN -> {
+                                this.advance();
                                 break outer;
                             }
                             case COMMA -> this.advance();
-                            default -> args.add(this.getExpression());
+                            default -> {
+                                if(this.peek() == null) {
+                                    break outer;
+                                }
+                                args.add(this.getExpression());
+                            }
                         }
                     }
                     return new FuncCallNode(current.name, args);
@@ -99,7 +105,6 @@ public class Parser {
                 case STAR -> {
                     this.advance();
                     power = new BinaryNode(BinaryNode.Type.MULTIPLY, power, this.getPower());
-
                 }
                 case SLASH -> {
                     this.advance();

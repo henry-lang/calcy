@@ -37,8 +37,10 @@ public abstract class InputApplication implements Application {
             case 32: // Space bar
             case ALT: break;
             default: {
-                this.input = Arrays.copyOf(this.input, this.input.length + 1);
-                this.input[this.input.length - 1] = key;
+                if(key != 65535) {
+                    this.input = Arrays.copyOf(this.input, this.input.length + 1);
+                    this.input[this.input.length - 1] = key;
+                }
                 break;
             }
         }

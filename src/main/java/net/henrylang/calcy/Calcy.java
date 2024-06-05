@@ -1,6 +1,7 @@
 package net.henrylang.calcy;
 
 import net.henrylang.calcy.application.*;
+import net.henrylang.calcy.application.evaluator.EvaluatorApplication;
 import processing.core.PApplet;
 import processing.core.PImage;
 

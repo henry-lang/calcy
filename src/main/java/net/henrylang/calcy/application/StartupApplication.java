@@ -5,7 +5,7 @@ import net.henrylang.calcy.Screen;
 
 public class StartupApplication implements Application {
     private static final int[] calcy = {'c', 'a', 'l', 'c', 'y'};
-    private static final int[] author = {'b', 'y', ' ', 'h', 'e', 'n', 'r', 'y', 'l', 'a', 'n', 'g'};
+    private static final int[] author = {'b', 'y', ' ', 'H', 'e', 'n', 'r', 'y', ' ', 'L'};
 
     @Override
     public UpdateResult update(long frameCount, Screen screen) {
