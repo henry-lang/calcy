@@ -76,6 +76,9 @@ public class Parser {
                 }
             }
             case MINUS -> {
+                if(this.peek() == null) {
+                    throw new EvaluateException("Expected Expr");
+                }
                 this.advance();
                 var factor = this.getFactor();
 
