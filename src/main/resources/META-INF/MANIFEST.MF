@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Main-Class: net.henrylang.calcy.Calcy
+Class-Path: core.jar core.jar
+

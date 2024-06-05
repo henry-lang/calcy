@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact name="calcy:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/calcy_jar</output-path>
+    <root id="root">
+      <element id="module-output" name="calcy.main" />
+      <element id="dir-copy" path="$PROJECT_DIR$/libs" />
+    </root>
+  </artifact>
+</component>
