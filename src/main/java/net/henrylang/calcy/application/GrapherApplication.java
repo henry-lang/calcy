@@ -38,6 +38,7 @@ public class GrapherApplication extends InputApplication {
         super.update(frameCount, screen);
 
         screen.fill(false);
+        screen.drawLine(GLYPH_ROWS + 2, 0, GLYPH_ROWS + 2, SCREEN_COLS);
 //        screen.drawLine(2 + GLYPH_ROWS, 0, 2 + GLYPH_ROWS, SCREEN_COLS - 1);
 //        screen.drawLine(2 + GLYPH_ROWS, 0, SCREEN_ROWS - 1, 0);
 //        screen.drawLine(SCREEN_ROWS - 1, 0, SCREEN_ROWS - 1, SCREEN_COLS - 1);
@@ -57,6 +58,12 @@ public class GrapherApplication extends InputApplication {
                     double screenYLast = evalLast * 4;
                     screen.drawLine((int) (SCREEN_ROWS - 2 - GLYPH_ROWS) - (int) screenYLast - 19, x - 1, (int) (SCREEN_ROWS - 2 - GLYPH_ROWS) - (int) screenY - 19, x);
                 } catch(Exception ignored) {}
+            }
+        }
+
+        for(int y = 0; y < GLYPH_ROWS + 2; y++) {
+            for(int x = 0; x < SCREEN_COLS; x++) {
+                screen.setPixel(y, x, false);
             }
         }
 
